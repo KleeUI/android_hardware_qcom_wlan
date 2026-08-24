@@ -169,7 +169,7 @@ wifi_error nan_pairing_indication_response(transaction_id id,
 
     peer = nan_pairing_get_peer_from_id(secure_nan, msg->pairing_instance_id);
     if (!peer) {
-        ALOGE("%s: peer not found, pairing id: %d", __FUNCTION__,
+        ALOGE("%s: peer not found, pairing id: %u", __FUNCTION__,
               msg->pairing_instance_id);
         return WIFI_ERROR_INVALID_ARGS;
     }
@@ -216,7 +216,7 @@ wifi_error nan_pairing_indication_response(transaction_id id,
 
         if ((secure_nan->dev_nik->nira_nonce_len +
              secure_nan->dev_nik->nira_tag_len) > PMKID_LEN) {
-            ALOGE("%s: Invalid nonce/tag len, nonce_len = %d, tag len = %d",
+            ALOGE("%s: Invalid nonce/tag len, nonce_len = %zu, tag len = %zu",
                   __FUNCTION__, secure_nan->dev_nik->nira_nonce_len,
                   secure_nan->dev_nik->nira_tag_len);
             goto fail;
@@ -240,7 +240,7 @@ wifi_error nan_pairing_indication_response(transaction_id id,
                                                       peer->bssid,
                                                       msg->key_info.body.pmk_info.pmk,
                                                       msg->key_info.body.pmk_info.pmk_len)) {
-                ALOGE("pmksa cache add failed for peer=" MACSTR " and pmk len=%d ",
+                ALOGE("pmksa cache add failed for peer=" MACSTR " and pmk len=%u ",
                       MAC2STR(peer->bssid),
                       msg->key_info.body.pmk_info.pmk_len);
                 goto fail;
@@ -497,7 +497,8 @@ int nan_pairing_handle_pasn_auth(wifi_handle handle, const u8 *data, size_t len)
                        pasn_get_pmk_len(pasn));
                 evt.npk_security_association.npk.pmk_len = pasn_get_pmk_len(pasn);
             } else {
-                ALOGE("%s: Invalid pmk len: %d", __FUNCTION__, pasn_get_pmk_len(pasn));
+                ALOGE("%s: Invalid pmk len: %zu", __FUNCTION__,
+                      pasn_get_pmk_len(pasn));
             }
             wpa_pasn_reset(pasn);
             nanCommand->handleNanPairingConfirm(&evt);

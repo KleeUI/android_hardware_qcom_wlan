@@ -4,6 +4,8 @@
 
 #include "sync.h"
 
+#include <inttypes.h>
+
 #define LOG_TAG  "WifiHAL"
 
 #include <utils/Log.h>
@@ -361,7 +363,7 @@ int WifiScanResult::handleResponse(WifiEvent &reply)
         goto cleanup;
     }
     scanReport->ts = nla_get_u64(tb_vendor[QCA_WLAN_VENDOR_ATTR_FW_SCAN_REPORT_TIMESTAMP]);
-    ALOGV("Scan Report Timestamp:%llu", scanReport->ts);
+    ALOGV("Scan Report Timestamp:%" PRIu64, scanReport->ts);
 
     /* Frequency List */
     if (!tb_vendor[QCA_WLAN_VENDOR_ATTR_FW_SCAN_REPORT_FREQ_LIST]) {

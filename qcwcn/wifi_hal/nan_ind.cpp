@@ -864,7 +864,8 @@ int NanCommand::handleNanSharedKeyDescIndication()
                pasn_get_pmk_len(pasn));
         evt.npk_security_association.npk.pmk_len = pasn_get_pmk_len(pasn);
     } else {
-        ALOGE("%s: Invalid pmk len: %d", __FUNCTION__, pasn_get_pmk_len(pasn));
+        ALOGE("%s: Invalid pmk len: %zu", __FUNCTION__,
+              pasn_get_pmk_len(pasn));
     }
     wpa_pasn_reset(pasn);
     handleNanPairingConfirm(&evt);
@@ -951,7 +952,7 @@ int NanCommand::getNanFollowup(NanFollowupInd *event)
             }
             if (event->requestor_instance_id &&
                 entry->requestor_instance_id != event->requestor_instance_id) {
-                ALOGI("Update previous requestor instance id: %d with new id: %d",
+                ALOGI("Update previous requestor instance id: %u with new id: %u",
                       entry->requestor_instance_id, event->requestor_instance_id);
                 entry->requestor_instance_id = event->requestor_instance_id;
             }
@@ -1244,7 +1245,7 @@ int NanCommand::getNanReceivePostDiscoveryVal(const u8 *pInValue,
     int ret = 0;
 
     if (length <= 8 || pInValue == NULL) {
-        ALOGE("%s: Invalid Arg TLV Len %d < 4",
+        ALOGE("%s: Invalid Arg TLV Len %u < 4",
               __func__, length);
         return -1;
     }
@@ -1315,7 +1316,7 @@ int NanCommand::getNanFurtherAvailabilityMap(const u8 *pInValue,
     int idx = 0;
 
     if ((length == 0) || pInValue == NULL) {
-        ALOGE("%s: Invalid Arg TLV Len %d or pInValue NULL",
+        ALOGE("%s: Invalid Arg TLV Len %u or pInValue NULL",
               __func__, length);
         return -1;
     }
@@ -1399,8 +1400,8 @@ wifi_error NanCommand::getNanStaParameter(wifi_interface_handle iface,
     }
     ALOGV("%s: NanStaparameter Master_pref:%x," \
           " Random_factor:%x, hop_count:%x " \
-          " beacon_transmit_time:%d" \
-          " ndp_channel_freq:%d", __func__,
+          " beacon_transmit_time:%u" \
+          " ndp_channel_freq:%u", __func__,
           pRsp->master_pref, pRsp->random_factor,
           pRsp->hop_count, pRsp->beacon_transmit_time, pRsp->ndp_channel_freq);
 cleanup:
@@ -1504,7 +1505,7 @@ int NanCommand::handleNdpIndication(u32 ndpCmdType, struct nlattr **tb_vendor)
         }
         if (tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_NUM_CHANNELS]) {
              num_channels = nla_get_u32(tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_NUM_CHANNELS]);
-             ALOGD("%s: num_channels = %d", __FUNCTION__, num_channels);
+             ALOGD("%s: num_channels = %u", __FUNCTION__, num_channels);
              if ((num_channels > NAN_MAX_CHANNEL_INFO_SUPPORTED) &&
                  (!tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_CHANNEL_INFO])) {
                  ALOGE("%s: QCA_WLAN_VENDOR_ATTR_NDP_CHANNEL_INFO not found", __FUNCTION__);
@@ -1512,7 +1513,7 @@ int NanCommand::handleNdpIndication(u32 ndpCmdType, struct nlattr **tb_vendor)
             }
         }
         num_ndp_ids = (u8)(nla_len(tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_INSTANCE_ID_ARRAY])/sizeof(u32));
-        ALOGD("%s: NDP Num Instance Ids : val %d", __FUNCTION__, num_ndp_ids);
+        ALOGD("%s: NDP Num Instance Ids : val %u", __FUNCTION__, num_ndp_ids);
 
         pNdpScheduleUpdateInd =
             (NanDataPathScheduleUpdateInd *)malloc(sizeof(NanDataPathScheduleUpdateInd)
@@ -1566,7 +1567,7 @@ int NanCommand::getNdpRequest(struct nlattr **tb_vendor,
     memcpy(&event->peer_disc_mac_addr[0], nla_data(tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_PEER_DISCOVERY_MAC_ADDR]), len);
 
     event->ndp_instance_id = nla_get_u32(tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_INSTANCE_ID]);
-    ALOGD("%s: Ndp Instance id: %d", __FUNCTION__, event->ndp_instance_id);
+    ALOGD("%s: Ndp Instance id: %u", __FUNCTION__, event->ndp_instance_id);
     if (tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_APP_INFO]) {
         len = nla_len(tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_APP_INFO]);
         len = ((sizeof(event->app_info.ndp_app_info) <= len) ? sizeof(event->app_info.ndp_app_info) : len);
@@ -1628,7 +1629,7 @@ int NanCommand::getNdpConfirm(struct nlattr **tb_vendor,
     }
 
     event->ndp_instance_id = nla_get_u16(tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_INSTANCE_ID]);
-    ALOGD("%s: Service Instance id : val %d", __FUNCTION__, event->ndp_instance_id);
+    ALOGD("%s: Service Instance id : val %u", __FUNCTION__, event->ndp_instance_id);
 
     len = nla_len(tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_NDI_MAC_ADDR]);
     len = ((sizeof(event->peer_ndi_mac_addr) <= len) ? sizeof(event->peer_ndi_mac_addr) : len);
@@ -1667,7 +1668,7 @@ int NanCommand::getNdpConfirm(struct nlattr **tb_vendor,
     if (tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_NUM_CHANNELS]) {
         event->num_channels =
             nla_get_u32(tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_NUM_CHANNELS]);
-        ALOGD("%s: num_channels = %d", __FUNCTION__, event->num_channels);
+        ALOGD("%s: num_channels = %u", __FUNCTION__, event->num_channels);
         if ((event->num_channels > NAN_MAX_CHANNEL_INFO_SUPPORTED) &&
             (!tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_CHANNEL_INFO])) {
             ALOGE("%s: QCA_WLAN_VENDOR_ATTR_NDP_CHANNEL_INFO not found", __FUNCTION__);
@@ -1693,21 +1694,21 @@ int NanCommand::getNdpConfirm(struct nlattr **tb_vendor,
                 return WIFI_ERROR_INVALID_ARGS;
             }
             pChInfo->channel = nla_get_u32(tb2[QCA_WLAN_VENDOR_ATTR_NDP_CHANNEL]);
-            ALOGD("%s: Channel = %d", __FUNCTION__, pChInfo->channel);
+            ALOGD("%s: Channel = %u", __FUNCTION__, pChInfo->channel);
 
             if (!tb2[QCA_WLAN_VENDOR_ATTR_NDP_CHANNEL_WIDTH]) {
                 ALOGE("%s: QCA_WLAN_VENDOR_ATTR_NDP_CHANNEL_WIDTH not found", __FUNCTION__);
                 return WIFI_ERROR_INVALID_ARGS;
             }
             pChInfo->bandwidth = nla_get_u32(tb2[QCA_WLAN_VENDOR_ATTR_NDP_CHANNEL_WIDTH]);
-            ALOGD("%s: Channel BW = %d", __FUNCTION__, pChInfo->bandwidth);
+            ALOGD("%s: Channel BW = %u", __FUNCTION__, pChInfo->bandwidth);
 
             if (!tb2[QCA_WLAN_VENDOR_ATTR_NDP_NSS]) {
                 ALOGE("%s: QCA_WLAN_VENDOR_ATTR_NDP_NSS not found", __FUNCTION__);
                 return WIFI_ERROR_INVALID_ARGS;
             }
             pChInfo->nss = nla_get_u32(tb2[QCA_WLAN_VENDOR_ATTR_NDP_NSS]);
-            ALOGD("%s: No. Spatial Stream = %d", __FUNCTION__, pChInfo->nss);
+            ALOGD("%s: No. Spatial Stream = %u", __FUNCTION__, pChInfo->nss);
         }
     }
     return WIFI_SUCCESS;
@@ -1727,7 +1728,8 @@ int NanCommand::getNdpScheduleUpdate(struct nlattr **tb_vendor,
     memcpy(&event->peer_mac_addr[0], nla_data(tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_PEER_DISCOVERY_MAC_ADDR]), len);
 
     event->schedule_update_reason_code = nla_get_u32(tb_vendor[QCA_WLAN_VENDOR_ATTR_NDP_SCHEDULE_UPDATE_REASON]);
-    ALOGD("%s: Reason code %d", __FUNCTION__, event->schedule_update_reason_code);
+    ALOGD("%s: Reason code %u", __FUNCTION__,
+          event->schedule_update_reason_code);
 
     if (event->num_channels != 0) {
         for (chInfo =
@@ -1747,21 +1749,21 @@ int NanCommand::getNdpScheduleUpdate(struct nlattr **tb_vendor,
                 return WIFI_ERROR_INVALID_ARGS;
             }
             pChInfo->channel = nla_get_u32(tb2[QCA_WLAN_VENDOR_ATTR_NDP_CHANNEL]);
-            ALOGD("%s: Channel = %d", __FUNCTION__, pChInfo->channel);
+            ALOGD("%s: Channel = %u", __FUNCTION__, pChInfo->channel);
 
             if (!tb2[QCA_WLAN_VENDOR_ATTR_NDP_CHANNEL_WIDTH]) {
                 ALOGE("%s: QCA_WLAN_VENDOR_ATTR_NDP_CHANNEL_WIDTH not found", __FUNCTION__);
                 return WIFI_ERROR_INVALID_ARGS;
             }
             pChInfo->bandwidth = nla_get_u32(tb2[QCA_WLAN_VENDOR_ATTR_NDP_CHANNEL_WIDTH]);
-            ALOGD("%s: Channel BW = %d", __FUNCTION__, pChInfo->bandwidth);
+            ALOGD("%s: Channel BW = %u", __FUNCTION__, pChInfo->bandwidth);
 
            if (!tb2[QCA_WLAN_VENDOR_ATTR_NDP_NSS]) {
                 ALOGE("%s: QCA_WLAN_VENDOR_ATTR_NDP_NSS not found", __FUNCTION__);
                 return WIFI_ERROR_INVALID_ARGS;
             }
             pChInfo->nss = nla_get_u32(tb2[QCA_WLAN_VENDOR_ATTR_NDP_NSS]);
-            ALOGD("%s: No. Spatial Stream = %d", __FUNCTION__, pChInfo->nss);
+            ALOGD("%s: No. Spatial Stream = %u", __FUNCTION__, pChInfo->nss);
         }
     }
 
