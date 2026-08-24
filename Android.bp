@@ -47,6 +47,7 @@ soong_config_module_type {
 soong_config_string_variable {
     name: "board_wlan_chip",
     values: [
+        "waipio",
         "wcn6740",
         "wcn3990",
         "wcn7850",
@@ -66,6 +67,19 @@ wifihal_qcom_defaults {
     name: "libwifi-hal-qcom",
     soong_config_variables: {
         board_wlan_chip: {
+            waipio: {
+                whole_static_libs: [
+                    "//hardware/qcom/wlan/qcwcn:libwifi-hal-qcom",
+                ],
+                shared_libs: [
+                    "//hardware/qcom/wlan:libcld80211",
+                    "libcrypto",
+                ] + select(soong_config_variable("qcom_wifi", "libpasn_support"), {
+                    true: ["libpasn"],
+                    false: [],
+                    default: ["libpasn"],
+                }),
+            },
             wcn6740: {
                 whole_static_libs: [
                     "//hardware/qcom/wlan/wcn6740:libwifi-hal-qcom",
